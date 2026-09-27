@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TVB Academy — Learn Broadcast Editing</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --violet:#8B5CF6;--cyan:#22D3EE;--pink:#F472B6;
+  --glass-bg:rgba(255,255,255,.08);--glass-bg-strong:rgba(255,255,255,.14);
+  --glass-border:rgba(255,255,255,.18);--glass-border-strong:rgba(255,255,255,.3);
+  --text:rgba(255,255,255,.92);--text-dim:rgba(255,255,255,.62);--text-faint:rgba(255,255,255,.4);
+  --disp:'Space Grotesk',sans-serif;--body:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);color:var(--text);min-height:100vh;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(139,92,246,.35), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(34,211,238,.3), transparent 45%),
+    radial-gradient(circle at 50% 90%, rgba(244,114,182,.22), transparent 50%),
+    #0b0b16;
+  overflow-x:hidden;
+}
+.glass{
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  border:1px solid var(--glass-border);
+  border-radius:24px;
+  box-shadow:0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.glass:hover{border-color:var(--glass-border-strong)}
+.wrap{max-width:1160px;margin:0 auto;padding:0 2rem}
+
+/* NAV */
+nav{position:fixed;top:1.2rem;left:50%;transform:translateX(-50%);z-index:200;
+  display:flex;align-items:center;gap:.4rem;padding:.6rem .7rem;border-radius:100px;
+  background:rgba(20,20,32,.55);backdrop-filter:blur(18px);border:1px solid var(--glass-border);
+  max-width:calc(100% - 2rem);
+}
+.nav-logo{font-family:var(--disp);font-weight:700;font-size:1rem;padding:0 1rem;white-space:nowrap}
+.nav-logo span{background:linear-gradient(90deg,var(--violet),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav-link{font-size:.85rem;font-weight:500;color:var(--text-dim);text-decoration:none;padding:.5rem 1rem;border-radius:100px;transition:.2s;white-space:nowrap}
+.nav-link:hover{color:var(--text);background:rgba(255,255,255,.08)}
+.nav-cta{font-size:.85rem;font-weight:600;color:#0b0b16;background:linear-gradient(90deg,var(--cyan),var(--violet));padding:.55rem 1.2rem;border-radius:100px;text-decoration:none;white-space:nowrap}
+
+/* HERO */
+.hero{padding:11rem 2rem 6rem;text-align:center;position:relative}
+.pill{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1.1rem;border-radius:100px;font-size:.8rem;color:var(--text-dim);margin-bottom:2rem}
+.pill .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.hero h1{font-family:var(--disp);font-weight:700;font-size:clamp(2.6rem,6.5vw,4.6rem);line-height:1.05;letter-spacing:-.02em;max-width:820px;margin:0 auto 1.3rem}
+.hero h1 .grad{background:linear-gradient(90deg,var(--violet),var(--cyan) 60%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:1.1rem;color:var(--text-dim);max-width:560px;margin:0 auto 2.4rem;line-height:1.6}
+.hero-ctas{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{font-family:var(--body);font-weight:600;font-size:.95rem;color:#0b0b16;background:linear-gradient(90deg,var(--cyan),var(--violet));padding:.9rem 2rem;border-radius:14px;text-decoration:none;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(139,92,246,.35);transition:transform .15s}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-ghost{font-family:var(--body);font-weight:600;font-size:.95rem;color:var(--text);padding:.9rem 2rem;border-radius:14px;text-decoration:none;cursor:pointer;transition:.2s}
+
+/* STATS STRIP */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;max-width:900px;margin:4rem auto 0;padding:1.6rem 0}
+.stat{text-align:center}
+.stat .n{font-family:var(--disp);font-weight:700;font-size:2rem}
+.stat .l{font-size:.75rem;color:var(--text-faint);letter-spacing:.05em;text-transform:uppercase;margin-top:.2rem}
+
+/* SECTION SHELL */
+section{padding:5rem 0}
+.eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);margin-bottom:.8rem;text-align:center}
+.sec-title{font-family:var(--disp);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);text-align:center;letter-spacing:-.01em;margin-bottom:.8rem}
+.sec-sub{text-align:center;color:var(--text-dim);max-width:520px;margin:0 auto 3rem;line-height:1.6}
+
+/* TRACK TABS */
+.tabs{display:flex;justify-content:center;gap:.6rem;margin-bottom:2.5rem;flex-wrap:wrap}
+.tab-btn{font-family:var(--body);font-weight:600;font-size:.85rem;color:var(--text-dim);background:transparent;border:1px solid var(--glass-border);padding:.6rem 1.3rem;border-radius:100px;cursor:pointer;transition:.2s}
+.tab-btn.active{color:#0b0b16;background:linear-gradient(90deg,var(--cyan),var(--violet));border-color:transparent}
+.tab-panel{display:none}
+.tab-panel.active{display:grid}
+
+/* MODULE GRID */
+.module-grid{grid-template-columns:repeat(3,1fr);gap:1.4rem}
+.module-card{padding:1.8rem;transition:transform .2s}
+.module-card:hover{transform:translateY(-4px)}
+.mod-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-weight:700;font-size:1.1rem;margin-bottom:1.1rem}
+.mod-title{font-family:var(--disp);font-weight:600;font-size:1.15rem;margin-bottom:.5rem}
+.mod-desc{font-size:.88rem;color:var(--text-dim);line-height:1.6;margin-bottom:1.1rem}
+.mod-meta{display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-faint);border-top:1px solid var(--glass-border);padding-top:.9rem}
+
+/* FEATURES */
+.feat-grid{grid-template-columns:repeat(3,1fr);gap:1.4rem}
+.feat-card{padding:2rem 1.6rem;text-align:center}
+.feat-num{font-family:var(--disp);font-weight:700;font-size:1.6rem;color:var(--cyan);margin-bottom:.8rem}
+.feat-card h3{font-family:var(--disp);font-weight:600;font-size:1.05rem;margin-bottom:.6rem}
+.feat-card p{font-size:.85rem;color:var(--text-dim);line-height:1.6}
+
+/* PATH TIMELINE */
+.path{max-width:720px;margin:0 auto;position:relative;padding-left:2.2rem}
+.path::before{content:'';position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--violet),var(--cyan))}
+.path-step{position:relative;padding:1.4rem 1.6rem;margin-bottom:1rem}
+.path-step::before{content:'';position:absolute;left:-2.2rem;top:1.6rem;width:12px;height:12px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px rgba(34,211,238,.2)}
+.path-step h4{font-family:var(--disp);font-weight:600;font-size:1rem;margin-bottom:.4rem}
+.path-step p{font-size:.85rem;color:var(--text-dim);line-height:1.6}
+
+/* CTA */
+.cta-box{max-width:760px;margin:0 auto;padding:3.5rem 3rem;text-align:center}
+.cta-box h2{font-family:var(--disp);font-weight:700;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:1rem}
+.cta-box p{color:var(--text-dim);margin-bottom:2rem}
+
+footer{padding:3rem 2rem;text-align:center;color:var(--text-faint);font-size:.8rem}
+
+@media(max-width:860px){
+  .module-grid,.feat-grid{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr);gap:1.4rem}
+  .nav-link{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">TVB <span>Academy</span></div>
+  <a class="nav-link" href="#modules">Modules</a>
+  <a class="nav-link" href="#path">Learning path</a>
+  <a class="nav-link" href="#why">Why TVB</a>
+  <a class="nav-cta" href="#cta">Enroll free</a>
+</nav>
+
+<section class="hero">
+  <div class="pill glass"><span class="dot"></span> Now enrolling — Spring cohort</div>
+  <h1>Learn to cut <span class="grad">broadcast-grade</span> video, start to finish</h1>
+  <p>A structured course for editors on Premiere Pro, After Effects, and the full TV broadcast delivery pipeline — from raw footage to a finished program.</p>
+  <div class="hero-ctas">
+    <a href="#cta" class="btn-primary">Start learning free</a>
+    <a href="#modules" class="btn-ghost">View curriculum</a>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n">42</div><div class="l">Lessons</div></div>
+    <div class="stat"><div class="n">4</div><div class="l">Tracks</div></div>
+    <div class="stat"><div class="n">9.4k</div><div class="l">Editors trained</div></div>
+    <div class="stat"><div class="n">4.8</div><div class="l">Avg rating</div></div>
+  </div>
+</section>
+
+<section id="modules">
+  <div class="wrap">
+    <p class="eyebrow">Curriculum</p>
+    <h2 class="sec-title">Four tracks, one pipeline</h2>
+    <p class="sec-sub">Each track is self-contained, but built to plug into the next — the same way footage actually moves through a real production.</p>
+    <div class="tabs">
+      <button class="tab-btn active" data-t="all">All tracks</button>
+      <button class="tab-btn" data-t="premiere">Premiere Pro</button>
+      <button class="tab-btn" data-t="ae">After Effects</button>
+      <button class="tab-btn" data-t="delivery">Audio & delivery</button>
+    </div>
+    <div class="tab-panel active grid module-grid" data-p="all" id="grid-all"></div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <p class="eyebrow">Why TVB Academy</p>
+    <h2 class="sec-title">Built by working broadcast editors</h2>
+    <p class="sec-sub">Not generic editing tips — the exact workflow used to deliver a real TV program, taught by people who deliver them every week.</p>
+    <div class="grid feat-grid">
+      <div class="glass feat-card">
+        <div class="feat-num">01</div>
+        <h3>Real project files</h3>
+        <p>Every lesson ships with the actual Premiere and After Effects project used in the walkthrough — not a stripped-down demo.</p>
+      </div>
+      <div class="glass feat-card">
+        <div class="feat-num">02</div>
+        <h3>Broadcast-specific</h3>
+        <p>Timecodes, delivery specs, and graphics timing built around actual broadcast requirements, not generic YouTube editing.</p>
+      </div>
+      <div class="glass feat-card">
+        <div class="feat-num">03</div>
+        <h3>Cohort feedback</h3>
+        <p>Submit your cut and get notes from a working editor — the same review process used in a real production house.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="path">
+  <div class="wrap">
+    <p class="eyebrow">Learning path</p>
+    <h2 class="sec-title">From empty timeline to delivered master</h2>
+    <p class="sec-sub">The course follows the order footage actually moves through a production — not a random topic list.</p>
+    <div class="path" id="pathList"></div>
+  </div>
+</section>
+
+<section id="cta">
+  <div class="wrap">
+    <div class="glass cta-box">
+      <h2>Ready to cut like a broadcast editor?</h2>
+      <p>Free to start. No credit card. Cancel any time.</p>
+      <a href="#" class="btn-primary">Enroll in TVB Academy</a>
+    </div>
+  </div>
+</section>
+
+<footer>&copy; 2026 TVB Academy — Editor training for broadcast production</footer>
+
+<script>
+const modules=[
+  {track:'premiere',icon:'Pr',color:'linear-gradient(135deg,#8B5CF6,#6D28D9)',title:'Footage & organization',desc:'Import, bin structure, take selection, and building your first sequence at broadcast spec.',lessons:6,level:'Foundation'},
+  {track:'premiere',icon:'Pr',color:'linear-gradient(135deg,#8B5CF6,#6D28D9)',title:'Cutting techniques',desc:'Ripple, roll, J-cuts, L-cuts, and match cuts — when to use each and why.',lessons:5,level:'Core'},
+  {track:'premiere',icon:'Pr',color:'linear-gradient(135deg,#8B5CF6,#6D28D9)',title:'Rough cut to fine cut',desc:'Pacing, rhythm, and structural editing across a full segment.',lessons:5,level:'Core'},
+  {track:'ae',icon:'Ae',color:'linear-gradient(135deg,#22D3EE,#0891B2)',title:'Motion fundamentals',desc:'Keyframes, easing, and the Graph Editor — the physics of good motion.',lessons:6,level:'Foundation'},
+  {track:'ae',icon:'Ae',color:'linear-gradient(135deg,#22D3EE,#0891B2)',title:'Lower thirds & titles',desc:'Build a full broadcast title package with exact, reusable timing.',lessons:5,level:'Core'},
+  {track:'ae',icon:'Ae',color:'linear-gradient(135deg,#22D3EE,#0891B2)',title:'Transitions & bumpers',desc:'Section wipes, break bumpers, and end cards that match your package.',lessons:4,level:'Core'},
+  {track:'delivery',icon:'Au',color:'linear-gradient(135deg,#F472B6,#DB2777)',title:'Dialogue & mix',desc:'Noise reduction, EQ, compression, and keeping dialogue clear under music.',lessons:5,level:'Foundation'},
+  {track:'delivery',icon:'Au',color:'linear-gradient(135deg,#F472B6,#DB2777)',title:'Final assembly',desc:'Merging graphics, audio, and footage into one reviewed master.',lessons:3,level:'Advanced'},
+  {track:'delivery',icon:'Ex',color:'linear-gradient(135deg,#FBBF24,#D97706)',title:'Export & delivery',desc:'Master, broadcast, and platform-specific export presets explained.',lessons:3,level:'Advanced'},
+];
+function cardHTML(m){
+  return `<div class="glass module-card">
+    <div class="mod-icon" style="background:${m.color}">${m.icon}</div>
+    <div class="mod-title">${m.title}</div>
+    <div class="mod-desc">${m.desc}</div>
+    <div class="mod-meta"><span>${m.lessons} lessons</span><span>${m.level}</span></div>
+  </div>`;
+}
+document.getElementById('grid-all').innerHTML = modules.map(cardHTML).join('');
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const t=btn.dataset.t;
+    const list = t==='all' ? modules : modules.filter(m=>m.track===t);
+    document.getElementById('grid-all').innerHTML = list.map(cardHTML).join('');
+  });
+});
+
+const path=[
+  {t:'Set up the project',d:'Folder structure, resolution, frame rate — the foundation everything else builds on.'},
+  {t:'Edit in Premiere Pro',d:'Organize footage, build a sequence, cut it into a fine cut.'},
+  {t:'Mix the audio',d:'Clean dialogue, place music and SFX, balance the final mix.'},
+  {t:'Build graphics in After Effects',d:'Titles, lower thirds, transitions — animated with exact timing.'},
+  {t:'Assemble and deliver',d:'Merge everything into one program, review it, export the master.'},
+];
+document.getElementById('pathList').innerHTML = path.map((p,i)=>`<div class="glass path-step"><h4>${String(i+1).padStart(2,'0')} — ${p.t}</h4><p>${p.d}</p></div>`).join('');
+</script>
+</body>
+</html>
