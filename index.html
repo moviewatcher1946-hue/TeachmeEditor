@@ -146,12 +146,120 @@ window.HELP=[
 
 </script>
 <script>
+(function(){
+/* New lessons go in BEFORE each boss so the boss still unlocks last. */
+const PR=[
+{id:"pr04",title:"Audio Mix",goal:"Clean, balanced sound.",steps:["Open Window > Essential Sound.","Select a clip and tag it as Dialogue.","Use Auto-Match under Loudness.","Watch the Audio Meters: peaks must stay below 0 dB.","Lower music under speech with the clip volume line."],tip:"Red at the top of the meter means clipping. Pull the gain down.",task:"Tag a voice clip as Dialogue, auto-match it, and duck a music track under it.",boss:false},
+{id:"pr05",title:"Titles",goal:"Add readable text.",steps:["Press T for the Type tool.","Click in the Program monitor and type.","Open Window > Essential Graphics > Edit.","Set font, size, fill and a soft shadow.","Trim the title clip to about 3 seconds."],tip:"Keep text inside the safe margins so nothing is cropped on phones.",task:"Add a lower-third title with a shadow and a 3 second duration.",boss:false},
+{id:"pr06",title:"Speed and Transitions",goal:"Control pace and flow.",steps:["Right-click a clip > Speed/Duration (Ctrl/Cmd+R).","Try 200% and check the audio pitch option.","Press R for the Rate Stretch tool and drag a clip edge.","Click a cut and press Ctrl/Cmd+D for the default transition."],tip:"Hard cuts are the default. Use a transition only when it says something.",task:"Speed one clip to 150% and add one Cross Dissolve.",boss:false}
+];
+const AE=[
+{id:"ae04",title:"Shapes and Masks",goal:"Draw and reveal.",steps:["Press Q to draw a shape layer.","Press G for the Pen tool and mask a footage layer.","Press F to show Mask Feather and soften the edge.","Animate Mask Path with the stopwatch."],tip:"Double-tap M to list all mask properties.",task:"Reveal a clip through an animated mask with a feathered edge.",boss:false},
+{id:"ae05",title:"Text Animation",goal:"Make words move.",steps:["Press Ctrl/Cmd+T for the Type tool and click the comp.","Open the layer's Text group and click Animate.","Choose Position or Opacity.","Move the Range Selector Start to reveal letters over time."],tip:"Animate the Range Selector Offset for a clean per-letter build.",task:"Reveal a headline letter by letter over one second.",boss:false}
+];
+const HK=[
+["pr","Tools","Rate Stretch tool","R","R"],["pr","Tools","Type tool","T","T"],
+["pr","Editing","Speed / Duration","Ctrl+R","Cmd+R"],["pr","Editing","Default transition","Ctrl+D","Cmd+D"],
+["pr","Editing","Mark In","I","I"],["pr","Editing","Mark Out","O","O"],["pr","General","Save","Ctrl+S","Cmd+S"],
+["ae","Transform","Anchor Point","A","A"],["ae","Masks","Mask Feather","F","F"],["ae","Masks","Pen tool","G","G"],
+["ae","Layers","Split layer","Ctrl+Shift+D","Cmd+Shift+D"],["ae","General","Save","Ctrl+S","Cmd+S"],
+["ae","Timeline","Work area start","B","B"],["ae","Timeline","Work area end","N","N"]
+];
+const QZ=[
+{id:"q9",app:"pr",mod:"pr04",type:"mc",q:"Which level must audio peaks stay under?",opts:["-20 dB","0 dB","+6 dB"],a:1,exp:"Above 0 dB the signal clips and distorts."},
+{id:"q10",app:"pr",mod:"pr04",type:"tf",q:"Essential Sound can auto-match loudness.",a:true,exp:"Loudness > Auto-Match sets a consistent level."},
+{id:"q11",app:"pr",mod:"pr05",type:"mc",q:"Which key selects the Type tool?",opts:["T","X","H"],a:0,exp:"T switches to the Type tool."},
+{id:"q12",app:"pr",mod:"pr06",type:"key",q:"Shortcut for Speed/Duration?",a:"Ctrl+R",mac:"Cmd+R",exp:"Ctrl/Cmd+R opens the Speed/Duration dialog."},
+{id:"q13",app:"ae",mod:"ae04",type:"mc",q:"Which key shows Mask Feather?",opts:["F","G","Q"],a:0,exp:"With a mask selected, F reveals Mask Feather."},
+{id:"q14",app:"ae",mod:"ae04",type:"tf",q:"G selects the Pen tool.",a:true,exp:"G is the Pen tool shortcut."},
+{id:"q15",app:"ae",mod:"ae05",type:"mc",q:"What reveals text letter by letter?",opts:["Range Selector","Mask Path","Pre-compose"],a:0,exp:"Animating a Range Selector controls which characters are affected."}
+];
+const HP=[
+{t:"Audio too quiet or too loud",fix:["Open Essential Sound and tag the clip.","Use Auto-Match under Loudness.","Check the meters stay below 0 dB."]},
+{t:"Export too large",fix:["Ctrl/Cmd+M to open Export.","Lower the target bitrate to 8-12 Mbps for 1080p.","Export again and compare file size."]},
+{t:"Text looks blurry (After Effects)",fix:["Set the layer's quality to Best.","Turn on Continuously Rasterize for scaled layers.","Check the comp resolution is Full."]},
+{t:"Playback is choppy (After Effects)",fix:["Set Resolution to Half in the comp panel.","Shrink the work area with B and N.","Purge caches with Edit > Purge."]}
+];
+
+function mods(list,extra){const i=list.findIndex(m=>m.boss);list.splice(i<0?list.length:i,0,...extra)}
+const jobs={PR_MODULES:l=>mods(l,PR),AE_MODULES:l=>mods(l,AE),HOTKEYS:l=>l.push(...HK),QUIZZES:l=>l.push(...QZ),HELP:l=>l.push(...HP)};
+Object.keys(jobs).forEach(k=>{
+  if(Array.isArray(window[k])){jobs[k](window[k]);return}
+  let v;Object.defineProperty(window,k,{configurable:true,get:()=>v,set:x=>{v=x;if(Array.isArray(x))jobs[k](x)}});
+});
+if(typeof view==="function"&&typeof S!=="undefined"){try{view()}catch(e){}}
+})();
+</script>
+<script>
+/* ===== PRO PACK: extra Premiere/AE lessons + Sound Design + GFX tracks ===== */
+(function () {
+  function bossIndex(list) { const i = list.findIndex(m => m.boss); return i < 0 ? list.length : i; }
+
+  PR_MODULES.splice(bossIndex(PR_MODULES), 0,
+    {id:"pr07",title:"Lumetri Color",goal:"Fix, then grade.",steps:["Open Window > Lumetri Color.","Fix exposure and white balance in Basic.","Add contrast, then shape it with Curves.","Apply the look on an Adjustment Layer."],tip:"Correct first, grade second. A look on bad exposure never sits right.",task:"Color correct one clip, then add a look on an adjustment layer.",boss:false},
+    {id:"pr08",title:"Proxies",goal:"Edit heavy footage smoothly.",steps:["Right-click clips > Proxy > Create Proxies.","Pick a low resolution preset.","Toggle proxies on with the button in the Program monitor.","Switch proxies off before the final export."],tip:"Proxies change playback only. Your export still uses the full quality files.",task:"Create proxies for two clips and toggle them on and off.",boss:false},
+    {id:"pr09",title:"Nested Sequences",goal:"Keep complex timelines tidy.",steps:["Select several clips and right-click > Nest.","Double-click the nest to edit inside it.","Apply an effect to the whole nest at once.","Name the nest so you can find it later."],tip:"Nest a finished section, then treat it like one clip.",task:"Nest four clips and apply one effect to the nest.",boss:false}
+  );
+
+  AE_MODULES.splice(bossIndex(AE_MODULES), 0,
+    {id:"ae06",title:"Expressions",goal:"Animate with a line of code.",steps:["Alt/Option-click the stopwatch on a property.","Type wiggle(3,30).","Click outside the box to apply it.","Alt/Option-click the stopwatch again to remove it."],tip:"wiggle(frequency, amount) adds organic shake without a single keyframe.",task:"Add a wiggle to a layer's position and tune the amount.",boss:false},
+    {id:"ae07",title:"Motion Tracking",goal:"Lock graphics to footage.",steps:["Open Window > Tracker.","Select the footage layer and click Track Motion.","Place the track point on a high contrast spot.","Analyze forward, then Edit Target and Apply."],tip:"Pick a feature that stays visible for the whole shot.",task:"Track a moving object and attach a text layer to it.",boss:false}
+  );
+
+  window.SD_MODULES = [
+    {id:"sd01",title:"Levels and Loudness",goal:"Loud enough, never clipped.",steps:["Play the mix and watch the meter.","Aim for speech around -16 to -12 dB average.","Keep peaks below -1 dB.","Check on phone speakers and headphones."],tip:"Platforms turn loud mixes down, so louder is not better.",task:"Mix a voice clip with peaks under -1 dB.",boss:false},
+    {id:"sd02",title:"EQ and Cleanup",goal:"Clear, natural voice.",steps:["Add a high-pass filter near 80 Hz.","Sweep a narrow boost to find harsh spots, then cut them.","Apply noise reduction lightly to avoid a watery sound.","Use a de-esser if S sounds sting."],tip:"Cut before you boost. Subtractive EQ stays natural.",task:"Clean a noisy voice clip with high-pass, EQ cut and light noise reduction.",boss:false},
+    {id:"sd03",title:"Compression and Ducking",goal:"Even voice, music that gets out of the way.",steps:["Put a compressor on the voice track.","Try a 3:1 ratio and lower the threshold for 3 to 6 dB of gain reduction.","Keep music on its own track.","Duck the music 8 to 12 dB under speech."],tip:"A slower attack lets the punch of each word through.",task:"Compress a voice track and duck music under it.",boss:false},
+    {id:"sd04",title:"SFX Layering",goal:"Hits that feel expensive.",steps:["Split a hit into impact, body and tail.","Put each layer on its own track.","Line the impact up with the exact frame of the visual hit.","Add a riser that ends right before the hit.","Add a touch of shared reverb so the layers glue."],tip:"Whooshes should start just before the motion and peak on it.",task:"Build one logo hit from three layers.",boss:false},
+    {id:"sd05",title:"BOSS: Sound-Designed Sting",goal:"Prove your ears.",steps:["Pick a 5 second visual.","Layer a riser, an impact and a sparkle.","Duck any music under the impact.","Export WAV, 48 kHz, 24-bit."],tip:"Sync to picture, frame by frame.",task:"Deliver a 5 second sting made from three sound layers.",boss:true}
+  ];
+
+  window.GFX_MODULES = [
+    {id:"gfx01",title:"Layers and Selections",goal:"Build non-destructively.",steps:["Press Ctrl/Cmd+Shift+N for a new layer.","Use M or L to select an area.","Press Ctrl/Cmd+J to copy the selection to its own layer.","Name every layer as you go."],tip:"Use layer masks instead of the eraser so you can undo later.",task:"Cut out a subject onto its own named layer with a mask.",boss:false},
+    {id:"gfx02",title:"Type and Color",goal:"Text that reads instantly.",steps:["Press T and click the canvas.","Pick one bold font.","Use two colors at most.","Add a stroke or shadow to lift text off busy images."],tip:"If you squint and cannot read it, it is too weak.",task:"Make a headline that is readable at thumbnail size.",boss:false},
+    {id:"gfx03",title:"Thumbnail Design",goal:"Stop the scroll.",steps:["Create a 1280x720 canvas.","Place the subject large on one side.","Add 3 to 4 words of big text.","Shrink the preview to check it still reads."],tip:"One focal point, a clear face, few words.",task:"Design one thumbnail with one focal point and four words or fewer.",boss:false},
+    {id:"gfx04",title:"Export Right",goal:"Sharp files that upload clean.",steps:["Use File > Export > Export As.","Choose PNG for sharp graphics or JPG for photos.","Keep the color space sRGB.","Stay under the platform file size limit."],tip:"YouTube thumbnails must be under 2 MB.",task:"Export a thumbnail as JPG under 2 MB.",boss:false},
+    {id:"gfx05",title:"BOSS: Thumbnail Pack",goal:"Prove your design eye.",steps:["Design three variants.","Change one thing per variant.","Export all at 1280x720.","Name the files clearly."],tip:"Test one variable at a time.",task:"Deliver three thumbnail variants for testing.",boss:true}
+  ];
+
+  HOTKEYS.push(
+    ["sd","Playback","Play / stop","Space","Space"],["sd","Markers","Add marker","M","M"],
+    ["sd","General","Undo","Ctrl+Z","Cmd+Z"],["sd","General","Save","Ctrl+S","Cmd+S"],
+    ["gfx","Tools","Brush","B","B"],["gfx","Tools","Move","V","V"],["gfx","Tools","Eraser","E","E"],
+    ["gfx","Tools","Type","T","T"],["gfx","Select","Marquee","M","M"],["gfx","Select","Lasso","L","L"],
+    ["gfx","Select","Deselect","Ctrl+D","Cmd+D"],["gfx","Layers","Duplicate to new layer","Ctrl+J","Cmd+J"],
+    ["gfx","Layers","New layer","Ctrl+Shift+N","Cmd+Shift+N"],["gfx","Transform","Free Transform","Ctrl+T","Cmd+T"],
+    ["gfx","General","Save","Ctrl+S","Cmd+S"]
+  );
+
+  QUIZZES.push(
+    {id:"q16",app:"pr",mod:"pr07",type:"mc",q:"What should you do first in Lumetri?",opts:["Add a look","Fix exposure and white balance","Sharpen"],a:1,exp:"Correct first, then grade."},
+    {id:"q17",app:"pr",mod:"pr08",type:"tf",q:"Proxies lower the quality of your final export.",a:false,exp:"Proxies only affect playback."},
+    {id:"q18",app:"ae",mod:"ae06",type:"mc",q:"Which expression adds random shake?",opts:["wiggle()","loopOut()","time"],a:0,exp:"wiggle(frequency, amount) adds organic motion."},
+    {id:"q19",app:"sd",mod:"sd01",type:"mc",q:"Where should peaks stay?",opts:["Above 0 dB","Below -1 dB","At +3 dB"],a:1,exp:"Below -1 dB leaves headroom and avoids clipping."},
+    {id:"q20",app:"sd",mod:"sd02",type:"tf",q:"You should boost first and cut later.",a:false,exp:"Cut first. Subtractive EQ sounds more natural."},
+    {id:"q21",app:"sd",mod:"sd03",type:"mc",q:"Ducking does what to music?",opts:["Lowers it under speech","Speeds it up","Adds reverb"],a:0,exp:"Ducking pulls music down while someone talks."},
+    {id:"q22",app:"sd",mod:"sd04",type:"mc",q:"An impact should land...",opts:["Before the visual","On the visual hit frame","After a second"],a:1,exp:"Sync the impact to the exact frame."},
+    {id:"q23",app:"gfx",mod:"gfx03",type:"mc",q:"Standard thumbnail size?",opts:["1280x720","500x500","4000x1000"],a:0,exp:"1280x720 is the standard 16:9 thumbnail size."},
+    {id:"q24",app:"gfx",mod:"gfx01",type:"tf",q:"Masks let you hide pixels without deleting them.",a:true,exp:"Masks are non-destructive."},
+    {id:"q25",app:"gfx",mod:"gfx04",type:"mc",q:"Best format for photos?",opts:["JPG","GIF","SVG"],a:0,exp:"JPG compresses photos well."}
+  );
+
+  HELP.push(
+    {t:"Voice sounds muddy (Sound)",fix:["High-pass around 80 Hz.","Cut a little around 200 to 400 Hz.","Compare against a reference you like."]},
+    {t:"Text looks pixelated (GFX)",fix:["Work at 1280x720 or larger.","Keep text as vector type, not rasterized.","Export as PNG for sharp edges."]}
+  );
+})();
+</script>
+<script>
 'use strict';
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const S={sec:"modules",app:"pr",os:"win",learned:{},mod:null,step:0,q:"",fc:null,flip:false,T:null,scope:"all",mode:"normal",rank:"ROOKIE",iv:null};
-const MODS=()=>S.app=="pr"?PR_MODULES:AE_MODULES,ALLM=()=>[...PR_MODULES,...AE_MODULES];
-const NAMES={pr:"PREMIERE",ae:"AFTER FX"},SECS=[["modules","MODULES"],["hotkeys","HOTKEYS"],["tests","TESTS"],["help","HELP"]];
+const MODS=()=>({pr:PR_MODULES,ae:AE_MODULES,sd:SD_MODULES,gfx:GFX_MODULES})[S.app],ALLM=()=>[...PR_MODULES,...AE_MODULES,...SD_MODULES,...GFX_MODULES];
+const ARC=["FOOL","MAGICIAN","PRIESTESS","EMPRESS","EMPEROR","HIEROPHANT","LOVERS","CHARIOT","JUSTICE","HERMIT"],ST={g:0,p:0,c:0};
+const statHud=()=>`<div class="hud"><span>KNOWLEDGE ${Object.keys(S.learned).length}</span><span>GUTS ${ST.g}</span><span>PROFICIENCY ${ST.p}</span><span>CHARM ${ST.c}%</span></div>`;
+const NAMES={pr:"PREMIERE",ae:"AFTER FX",sd:"SOUND",gfx:"GFX"},SECS=[["modules","MODULES"],["hotkeys","HOTKEYS"],["tests","TESTS"],["help","HELP"]];
 const SHAKE=[{translate:"-10px 0"},{translate:"10px 0"},{translate:"0 0"}];
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const norm=s=>String(s).toLowerCase().replace(/\s+/g,"").replace(/command/g,"cmd").replace(/control/g,"ctrl").replace(/delete/g,"del");
@@ -169,6 +277,19 @@ else if(k=="click"){nz(t,.05,"bandpass",3000,1.2,.4);thump(t,220,70,.1,.55)}
 else if(k=="ok")[660,880,1320].forEach((n,i)=>tone(n,.2,"triangle",.14,t+i*.07));
 else if(k=="no"){tone(160,.2,"sawtooth",.15);tone(110,.3,"sawtooth",.15,t+.12)}
 else if(k=="clear")[523,659,784,1047].forEach((n,i)=>tone(n,.35,"square",.1,t+i*.1));
+else if(k=="flash"){
+const n=ac.sampleRate*.3|0,b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain(),h=t+.26;s.buffer=b;f.type="bandpass";f.Q.value=2;
+f.frequency.setValueAtTime(300,t);f.frequency.exponentialRampToValueAtTime(9000,h);
+g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(.32,h-.01);g.gain.exponentialRampToValueAtTime(.001,h+.02);
+s.connect(f);f.connect(g);g.connect(mg);s.start(t);
+const o=ac.createOscillator(),lf=ac.createBiquadFilter(),og=ac.createGain();o.type="sawtooth";lf.type="lowpass";lf.frequency.value=2400;
+o.frequency.setValueAtTime(180,t);o.frequency.exponentialRampToValueAtTime(1500,h);
+og.gain.setValueAtTime(.001,t);og.gain.exponentialRampToValueAtTime(.07,h-.01);og.gain.exponentialRampToValueAtTime(.001,h+.02);
+o.connect(lf);lf.connect(og);og.connect(mg);o.start(t);o.stop(h+.05);
+thump(h,150,32,.6,.85);nz(h,.08,"highpass",5000,.6,.4);nz(h,.35,"highpass",8000,.5,.09);
+[1568,2093,2637,3136,4186].forEach((fr,i)=>{tone(fr,.22,"triangle",.07,h+.03+i*.045);tone(fr*2,.12,"sine",.025,h+.03+i*.045)})}
+else if(k=="trumpet"){[[392,0,.16],[523,.14,.16],[659,.28,.42]].forEach(([f,o,d])=>{const s=t+o;[0,6].forEach(dt=>{const os=ac.createOscillator(),fl=ac.createBiquadFilter(),g=ac.createGain();os.type="sawtooth";os.frequency.value=f;os.detune.value=dt;fl.type="lowpass";fl.Q.value=4;fl.frequency.setValueAtTime(600,s);fl.frequency.exponentialRampToValueAtTime(3200,s+.06);fl.frequency.exponentialRampToValueAtTime(1800,s+d);g.gain.setValueAtTime(.001,s);g.gain.exponentialRampToValueAtTime(.12,s+.03);g.gain.setValueAtTime(.12,s+d*.6);g.gain.exponentialRampToValueAtTime(.001,s+d);os.connect(fl);fl.connect(g);g.connect(mg);os.start(s);os.stop(s+d+.02)})})}
 else if(k=="whoosh"){
 const n=ac.sampleRate*.5|0,b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
 const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=b;f.type="bandpass";f.Q.value=1.2;
@@ -197,24 +318,24 @@ $("#file").onchange=e=>{const f=e.target.files[0];if(!f)return;AC();clearInterva
 const FF=['Impact','Georgia','"Courier New"','"Arial Black"','"Times New Roman"'],CO=[["#fff","#0a0a0a"],["#0a0a0a","#fff"],["#e60012","#fff"],["#fff","#e60012"]];
 function ransom(el,txt){if(txt.length>26)return;el.innerHTML=[...txt].map(ch=>{if(ch==" ")return"<i style='display:inline-block;width:.35em'></i>";const c=CO[Math.random()*4|0];return `<span class="rl" style="font-family:${FF[Math.random()*5|0]};background:${c[1]};color:${c[0]};transform:rotate(${Math.random()*14-7|0}deg) translateY(${Math.random()*8-4|0}px);font-size:${(.85+Math.random()*.4).toFixed(2)}em">${esc(ch)}</span>`}).join("")}
 let busy=false;
-function go(fn){if(busy)return fn();busy=true;const w=$("#wipe");w.className="";void w.offsetWidth;w.className="go";sfx("whoosh");setTimeout(()=>{fn();window.scrollTo(0,0);busy=false},260);setTimeout(()=>w.className="",750)}
+function go(fn){if(busy)return fn();busy=true;const w=$("#wipe");w.className="";void w.offsetWidth;w.className="go";sfx("whoosh");if(!(S.T&&S.T.timed&&!S.T.end))sfx("flash");setTimeout(()=>{fn();window.scrollTo(0,0);busy=false},260);setTimeout(()=>w.className="",750)}
 const tog=(id,opts,cur)=>`<div class="tog" id="${id}">${opts.map(([k,l])=>`<button data-v="${k}" class="${k==cur?"on":""}">${l}</button>`).join("")}</div>`;
 const bindTog=(id,fn)=>$$("#"+id+" button").forEach(b=>b.onclick=()=>{sfx("click");fn(b.dataset.v)});
 function upd(){$("#rank").textContent=`${"★".repeat(Math.round(Object.keys(S.learned).length/ALLM().length*5))}${"☆".repeat(5-Math.round(Object.keys(S.learned).length/ALLM().length*5))} ${Object.keys(S.learned).length}/${ALLM().length} · ${S.rank}`}
 function sel(){const b=$("#nav .on"),s=$("#sel");if(b&&s){s.style.left=b.offsetLeft+"px";s.style.top=b.offsetTop+"px";s.style.width=b.offsetWidth+"px";s.style.height=b.offsetHeight+"px"}}
-function nav(){const n=$("#nav");n.innerHTML='<i id="sel"></i>'+SECS.map(([k,l],i)=>`<button data-k="${k}" class="${S.sec==k?"on":""}"><svg class="mk" viewBox="0 0 24 20"><path d="M2 6c6-4 14-4 20 0-1 8-6 12-10 12S3 14 2 6z"/><ellipse cx="8" cy="9" rx="2.6" ry="1.6"/><ellipse cx="16" cy="9" rx="2.6" ry="1.6"/></svg>${i+1} ${l}</button>`).join("");
+function nav(){const n=$("#nav");n.innerHTML='<i id="sel"></i>'+SECS.map(([k,l],i)=>`<button data-k="${k}" class="${S.sec==k?"on":""}"><svg class="mk" viewBox="0 0 24 20"><path d="M2 6c6-4 14-4 20 0-1 8-6 12-10 12S3 14 2 6z"/><ellipse cx="8" cy="9" rx="2.6" ry="1.6"/><ellipse cx="16" cy="9" rx="2.6" ry="1.6"/></svg>${l}</button>`).join("");
 $$("button",n).forEach(b=>b.onclick=()=>{sfx("click");clearInterval(S.iv);S.sec=b.dataset.k;S.mod=null;S.fc=null;S.T=null;S.q="";go(view)});sel()}
 function view(){nav();upd();({modules:vMods,hotkeys:vKeys,tests:vTests,help:vHelp})[S.sec]();$$("h2").forEach(e=>ransom(e,e.textContent))}
 function search(fn){const i=$("#q");i.oninput=e=>{S.q=e.target.value;fn();const n=$("#q");n.focus();n.setSelectionRange(99,99)}}
 
 /* ---------- modules ---------- */
 function vMods(){if(S.mod)return vMod();const L=MODS(),done=L.filter(m=>S.learned[m.id]).length,q=S.q.toLowerCase();
-$("#app").innerHTML=`<h2>MODULES</h2>${tog("tApp",[["pr","PREMIERE"],["ae","AFTER FX"]],S.app)}<input id="q" placeholder="Search modules..." value="${esc(S.q)}"><div class="bar"><div style="width:${done/L.length*100}%"></div><span>${done}/${L.length} LEARNED</span></div>`+L.map((m,i)=>{
+$("#app").innerHTML=`<h2>MODULES</h2>${tog("tApp",[["pr","PREMIERE"],["ae","AFTER FX"],["sd","SOUND DESIGN"],["gfx","GFX"]],S.app)}<input id="q" placeholder="Search modules..." value="${esc(S.q)}">${statHud()}<div class="bar"><div style="width:${done/L.length*100}%"></div><span>${done}/${L.length} LEARNED</span></div>`+L.map((m,i)=>{
 const lock=m.boss&&!L.slice(0,i).filter(x=>!x.boss).every(x=>S.learned[x.id]);
 if(q&&!(m.title+" "+m.goal).toLowerCase().includes(q))return"";
-return `<button class="card${lock?" lock":""}${S.learned[m.id]?" done":""}" data-i="${i}"><i>${String(i+1).padStart(2,"0")}</i><b>${esc(m.title)}</b><small>${lock?"🔒 LOCKED":m.boss?"BOSS":m.steps.length+" STEPS"}</small></button>`}).join("");
+return `<button class="card${lock?" lock":""}${S.learned[m.id]?" done":""}" data-i="${i}"><i></i><b>${esc(m.title)}</b><small>${lock?"🔒 LOCKED":m.boss?"BOSS":ARC[i%ARC.length]+" · "+m.steps.length+" STEPS"}</small></button>`}).join("");
 bindTog("tApp",v=>{S.app=v;S.q="";vMods()});search(vMods);
-$$(".card").forEach(c=>c.onclick=()=>{if(c.classList.contains("lock")){sfx("no");c.animate(SHAKE,{duration:250});return}sfx("click");S.mod=L[c.dataset.i];S.step=0;go(view)})}
+$$(".card").forEach(c=>c.onclick=(ev)=>{if(c.classList.contains("lock")){sfx("no");c.animate(SHAKE,{duration:250});return}sfx("click");S.mod=L[c.dataset.i];S.step=0;paperTear(ev,view)})}
 function vMod(){const m=S.mod,n=m.steps.length,on=!!S.learned[m.id];
 $("#app").innerHTML=`<button class="btn" id="back">◀ BACK</button><h2>${esc(m.title)}</h2><span class="goal">${esc(m.goal)}</span><div class="box"><span class="tag">STEP ${S.step+1}/${n}</span><p class="big">${esc(m.steps[S.step])}</p></div><div class="ctl"><button class="btn g" id="pv">◀</button><button class="btn" id="nx">▶</button></div><div class="tip"><b>PRO TIP</b>${esc(m.tip)}</div><div class="tip task"><b>PRACTICE</b>${esc(m.task)}</div><button class="btn big2${on?" g":""}" id="lrn">${on?"★ LEARNED":"MARK AS LEARNED"}</button>`;
 ransom($("h2"),m.title);
@@ -225,7 +346,7 @@ $("#lrn").onclick=()=>{if(S.learned[m.id])delete S.learned[m.id];else{S.learned[
 
 /* ---------- hotkeys ---------- */
 function vKeys(){if(S.fc)return vFlash();const q=S.q.toLowerCase(),H=HOTKEYS.filter(h=>h[0]==S.app&&(h[2]+" "+h[1]).toLowerCase().includes(q)),cats=[...new Set(H.map(h=>h[1]))];
-$("#app").innerHTML=`<h2>HOTKEYS</h2>${tog("tApp",[["pr","PREMIERE"],["ae","AFTER FX"]],S.app)}${tog("tOs",[["win","WINDOWS"],["mac","MAC"]],S.os)}<input id="q" placeholder="Search hotkeys..." value="${esc(S.q)}"><button class="btn" id="fc">FLASHCARDS</button>`+cats.map(c=>`<h3>${esc(c)}</h3>`+H.filter(h=>h[1]==c).map(h=>`<div class="row"><kbd>${esc(S.os=="win"?h[3]:h[4])}</kbd><b>${esc(h[2])}</b></div>`).join("")).join("");
+$("#app").innerHTML=`<h2>HOTKEYS</h2>${tog("tApp",[["pr","PREMIERE"],["ae","AFTER FX"],["sd","SOUND DESIGN"],["gfx","GFX"]],S.app)}${tog("tOs",[["win","WINDOWS"],["mac","MAC"]],S.os)}<input id="q" placeholder="Search hotkeys..." value="${esc(S.q)}"><button class="btn" id="fc">FLASHCARDS</button>`+cats.map(c=>`<h3>${esc(c)}</h3>`+H.filter(h=>h[1]==c).map(h=>`<div class="row"><kbd>${esc(S.os=="win"?h[3]:h[4])}</kbd><b>${esc(h[2])}</b></div>`).join("")).join("");
 bindTog("tApp",v=>{S.app=v;vKeys()});bindTog("tOs",v=>{S.os=v;vKeys()});search(vKeys);
 $("#fc").onclick=()=>{sfx("click");S.fc={i:0};S.flip=false;go(view)}}
 function vFlash(){const P=HOTKEYS.filter(h=>h[0]==S.app),h=P[S.fc.i%P.length];
@@ -238,7 +359,7 @@ $("#nx").onclick=()=>{sfx("click");S.fc.i=Math.random()*P.length|0;S.flip=false;
 function pool(scope){const g=HOTKEYS.map((h,i)=>({id:"k"+i,app:h[0],mod:null,type:"key",q:`${NAMES[h[0]]}: ${h[2]}?`,a:h[3],mac:h[4],exp:`${h[2]} = ${h[3]} (Win) / ${h[4]} (Mac)`}));
 return [...QUIZZES,...g].filter(q=>scope=="all"||q.app==scope||q.mod==scope)}
 function vTests(){if(S.T)return vQ();
-$("#app").innerHTML=`<h2>TESTS</h2><label class="lab">SCOPE<select id="sc"><option value="all">ALL</option><option value="pr">PREMIERE</option><option value="ae">AFTER FX</option>${ALLM().map(m=>`<option value="${m.id}">${esc(m.title)}</option>`).join("")}</select></label>${tog("tMode",[["normal","NORMAL"],["timed","TIMED 60s"]],S.mode)}${tog("tOs",[["win","WINDOWS"],["mac","MAC"]],S.os)}<br><button class="btn big2" id="go">START</button>`;
+$("#app").innerHTML=`<h2>TESTS</h2><label class="lab">SCOPE<select id="sc"><option value="all">ALL</option><option value="pr">PREMIERE</option><option value="ae">AFTER FX</option><option value="sd">SOUND DESIGN</option><option value="gfx">GFX</option>${ALLM().map(m=>`<option value="${m.id}">${esc(m.title)}</option>`).join("")}</select></label>${tog("tMode",[["normal","NORMAL"],["timed","TIMED 60s"]],S.mode)}${tog("tOs",[["win","WINDOWS"],["mac","MAC"]],S.os)}<br><button class="btn big2" id="go">START</button>`;
 $("#sc").value=S.scope;$("#sc").onchange=e=>S.scope=e.target.value;
 bindTog("tMode",v=>{S.mode=v;vTests()});bindTog("tOs",v=>{S.os=v;vTests()});
 $("#go").onclick=()=>{const qs=shuffle(pool(S.scope));if(!qs.length){sfx("no");return}sfx("click");startT(qs,S.mode=="timed")}}
@@ -250,15 +371,15 @@ $("#app").innerHTML=`<div class="hud"><span>Q ${T.i+1}/${T.qs.length}</span><spa
 $$("#ans .opt").forEach(b=>b.onclick=()=>ans(b.dataset.c=="1",q));
 if(q.type=="key"){const sub=()=>ans(norm($("#ki").value)==norm(S.os=="win"?q.a:(q.mac||q.a)),q);$("#ks").onclick=sub;$("#ki").onkeydown=e=>{if(e.key=="Enter")sub()};$("#ki").focus()}}
 function ans(ok,q){const T=S.T;if(T.done)return;T.done=true;T.att++;
-if(ok){T.right++;T.streak++;T.best=Math.max(T.best,T.streak);T.score+=10+Math.min(T.streak,5)*2;sfx("ok")}else{T.streak=0;T.wrong.push(q);sfx("no")}
+if(ok){T.right++;T.streak++;ST.g=Math.max(ST.g,T.streak);if(q.type=="key")ST.p++;T.best=Math.max(T.best,T.streak);T.score+=10+Math.min(T.streak,5)*2;sfx("ok")}else{T.streak=0;T.wrong.push(q);sfx("no")}
 $$("#ans .opt").forEach(b=>{if(b.dataset.c=="1")b.classList.add("ok")});
-$("#fb").innerHTML=`<div class="tip ${ok?"good":"bad"}"><b>${ok?"NICE!":"NOPE"}</b>${esc(q.exp||"")}</div><button class="btn" id="nq">NEXT ▶</button>`;
+$("#fb").innerHTML=`<div class="tip ${ok?"good":"bad"}"><b>${ok?(T.streak==5?"BATON PASS!":T.streak==3?"ONE MORE!":"NICE!"):"NOPE"}</b>${esc(q.exp||"")}</div><button class="btn" id="nq">NEXT ▶</button>`;
 $("#nq").onclick=nq;if(T.timed)setTimeout(nq,700)}
 function nq(){const T=S.T;if(!T||T.end||!T.done)return;T.i++;T.done=false;go(view)}
 function finish(){clearInterval(S.iv);const T=S.T;if(!T||T.end)return;T.end=true;const p=T.att?T.right/T.att:0;
-S.rank=p>=.9?"PHANTOM LEGEND":p>=.7?"ACE THIEF":p>=.5?"SHARP THIEF":"ROOKIE";T.pct=Math.round(p*100);sfx("clear");upd();if(S.sec=="tests")vEnd()}
+S.rank=p>=.9?"PHANTOM LEGEND":p>=.7?"ACE THIEF":p>=.5?"SHARP THIEF":"ROOKIE";T.pct=Math.round(p*100);ST.c=Math.max(ST.c,T.pct);sfx("clear");upd();if(S.sec=="tests")vEnd()}
 function vEnd(){const T=S.T;
-$("#app").innerHTML=`<div class="clear">${esc(S.rank)}</div><div class="hud"><span>SCORE ${T.score}</span><span>${T.right}/${T.att} RIGHT (${T.pct}%)</span><span>BEST STREAK ${T.best}</span></div><br>${T.wrong.length?`<button class="btn" id="rt">RETRY WRONG (${T.wrong.length})</button> `:""}<button class="btn g" id="nw">NEW TEST</button>`;
+$("#app").innerHTML=`<div class="clear">${esc(S.rank)}</div>${T.pct>=90?'<span class="tag">ALL-OUT ATTACK</span>':""}<div class="hud"><span>SCORE ${T.score}</span><span>${T.right}/${T.att} RIGHT (${T.pct}%)</span><span>BEST STREAK ${T.best}</span></div><br>${T.wrong.length?`<button class="btn" id="rt">RETRY WRONG (${T.wrong.length})</button> `:""}<button class="btn g" id="nw">NEW TEST</button>`;
 if(T.wrong.length)$("#rt").onclick=()=>{sfx("click");startT(shuffle(T.wrong),false)};
 $("#nw").onclick=()=>{sfx("click");S.T=null;go(view)}}
 
@@ -283,5 +404,470 @@ let mx=innerWidth/2,my=innerHeight/2;
 addEventListener("pointermove",e=>{mx=e.clientX;my=e.clientY});
 document.addEventListener("pointerdown",e=>starBurst(e.clientX,e.clientY,6));
 const _sfx=sfx;sfx=function(k){_sfx(k);if(k=="ok")starBurst(mx,my,14);if(k=="clear")starBurst(innerWidth/2,innerHeight/3,30)};
+</script>
+<script>
+/* ==========================================================
+   EDIT HEIST FX MODULE
+   Extra sounds + visual effects layered on top of the app.
+   Toggle with the FX button in the player bar.
+   ========================================================== */
+(function () {
+  'use strict';
+
+  const FX = {
+    on: true,
+    reduced: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    lastTrail: 0
+  };
+
+  /* ---------- styles ---------- */
+  const css = `
+  .btn{position:relative;overflow:hidden}
+  .btn:after{content:"";position:absolute;top:0;left:-120%;width:55%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);
+    transform:skewX(-20deg);pointer-events:none}
+  .btn:hover:after{animation:shine .55s}
+  @keyframes shine{to{left:140%}}
+
+  .ring{position:fixed;width:10px;height:10px;border:3px solid #fff;border-radius:50%;
+    pointer-events:none;z-index:8;transform:translate(-50%,-50%);
+    animation:ringOut .55s ease-out forwards}
+  @keyframes ringOut{to{width:190px;height:190px;opacity:0;border-color:var(--r)}}
+
+  .trail{position:fixed;width:9px;height:9px;background:var(--r);pointer-events:none;
+    z-index:8;transform:rotate(45deg);animation:trailFade .5s forwards}
+  .trail.w{background:#fff}
+  @keyframes trailFade{to{opacity:0;transform:rotate(45deg) scale(.1) translateY(14px)}}
+
+  .confetti{position:fixed;top:-20px;width:10px;height:16px;pointer-events:none;z-index:8;
+    animation:fall linear forwards}
+  @keyframes fall{to{transform:translate(var(--dx),110vh) rotate(var(--rot))}}
+
+  #flash{position:fixed;inset:0;z-index:8;pointer-events:none;opacity:0;background:var(--r)}
+  #flash.go{animation:flashA .35s ease-out}
+  #flash.white{background:#fff}
+  @keyframes flashA{0%{opacity:.55}100%{opacity:0}}
+
+  #app.shake{animation:shakeA .4s}
+  @keyframes shakeA{
+    0%,100%{translate:0 0}
+    15%{translate:-14px 4px}30%{translate:12px -5px}
+    45%{translate:-9px 3px}60%{translate:7px -2px}80%{translate:-3px 1px}
+  }
+
+  #logo:hover,#logo.glitch{animation:glitchA .28s steps(2) infinite}
+  @keyframes glitchA{
+    0%{text-shadow:-4px 0 #0ff,4px 0 #f0f;translate:0 0}
+    50%{text-shadow:4px 0 #0ff,-4px 0 #f0f;translate:3px -2px}
+    100%{text-shadow:-2px 0 #0ff,2px 0 #f0f;translate:-3px 2px}
+  }
+
+  .callout{position:fixed;left:50%;top:36%;z-index:10;white-space:nowrap;pointer-events:none;
+    font-size:clamp(44px,13vw,116px);color:#fff;text-shadow:6px 6px 0 var(--r);
+    transform:translate(-50%,-50%) rotate(-6deg) skew(-8deg);animation:calloutA 1s forwards}
+  @keyframes calloutA{
+    0%{opacity:0;transform:translate(-50%,-50%) rotate(-6deg) skew(-8deg) scale(2.4)}
+    18%{opacity:1;transform:translate(-50%,-50%) rotate(-6deg) skew(-8deg) scale(1)}
+    80%{opacity:1}
+    100%{opacity:0;transform:translate(-50%,-56%) rotate(-6deg) skew(-8deg) scale(1.08)}
+  }
+
+  .slash{position:fixed;inset:0;z-index:10;pointer-events:none;overflow:hidden;
+    background:rgba(0,0,0,.55);animation:slashBg 1.5s forwards}
+  .slash i{position:absolute;left:-30%;width:160%;height:16vh;background:#fff;
+    transform:skewY(-12deg) translateX(-120%);animation:slashBar .5s .05s cubic-bezier(.2,.9,.2,1) forwards}
+  .slash i.a{top:22%}
+  .slash i.b{top:52%;background:var(--r);animation-delay:.14s}
+  .slash b{position:absolute;left:50%;top:44%;font-size:clamp(40px,12vw,110px);color:var(--k);
+    text-shadow:5px 5px 0 var(--r);font-weight:400;white-space:nowrap;opacity:0;
+    transform:translate(-50%,-50%) rotate(-8deg) skew(-8deg);animation:slashTxt 1.2s .25s forwards}
+  @keyframes slashBar{to{transform:skewY(-12deg) translateX(0)}}
+  @keyframes slashTxt{
+    0%{opacity:0;scale:2.2}15%{opacity:1;scale:1}85%{opacity:1}100%{opacity:0}
+  }
+  @keyframes slashBg{0%{opacity:0}10%{opacity:1}80%{opacity:1}100%{opacity:0}}
+
+  #grain{position:fixed;inset:-50%;z-index:6;pointer-events:none;opacity:.07;
+    background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grainA .6s steps(4) infinite}
+  @keyframes grainA{
+    0%{transform:translate(0,0)}25%{transform:translate(-6%,4%)}
+    50%{transform:translate(5%,-5%)}75%{transform:translate(-3%,6%)}100%{transform:translate(0,0)}
+  }
+  body.nofx #grain,body.nofx .trail{display:none}
+  `;
+  const style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  /* ---------- persistent layers ---------- */
+  const grain = document.createElement('div');
+  grain.id = 'grain';
+  document.body.appendChild(grain);
+
+  const flashEl = document.createElement('div');
+  flashEl.id = 'flash';
+  document.body.appendChild(flashEl);
+
+  /* ---------- FX toggle button ---------- */
+  const fxBtn = document.createElement('button');
+  fxBtn.className = 'btn';
+  fxBtn.id = 'fxb';
+  fxBtn.textContent = 'FX: ON';
+  fxBtn.onclick = function () {
+    FX.on = !FX.on;
+    fxBtn.textContent = FX.on ? 'FX: ON' : 'FX: OFF';
+    document.body.classList.toggle('nofx', !FX.on);
+    if (FX.on) sfx('click');
+  };
+  const player = document.getElementById('player');
+  player.insertBefore(fxBtn, player.querySelector('small'));
+
+  /* ---------- small DOM helpers ---------- */
+  function spawn(cls, x, y, ttl) {
+    const d = document.createElement('div');
+    d.className = cls;
+    if (x !== undefined) { d.style.left = x + 'px'; d.style.top = y + 'px'; }
+    document.body.appendChild(d);
+    setTimeout(function () { d.remove(); }, ttl);
+    return d;
+  }
+
+  function ring(x, y) {
+    spawn('ring', x, y, 600);
+  }
+
+  function flash(white) {
+    flashEl.className = white ? 'white' : '';
+    void flashEl.offsetWidth;
+    flashEl.className += ' go';
+  }
+
+  function shake() {
+    const a = document.getElementById('app');
+    a.classList.remove('shake');
+    void a.offsetWidth;
+    a.classList.add('shake');
+  }
+
+  function glitchLogo() {
+    const l = document.getElementById('logo');
+    l.classList.add('glitch');
+    setTimeout(function () { l.classList.remove('glitch'); }, 450);
+  }
+
+  function callout(text) {
+    const d = spawn('callout', undefined, undefined, 1050);
+    d.textContent = text;
+  }
+
+  function slash(text) {
+    const d = spawn('slash', undefined, undefined, 1550);
+    d.innerHTML = '<i class="a"></i><i class="b"></i><b>' + text + '</b>';
+  }
+
+  function confetti(n) {
+    const colours = ['#e60012', '#ffffff', '#f4ead0', '#0a0a0a'];
+    for (let i = 0; i < n; i++) {
+      const c = spawn('confetti', Math.random() * innerWidth, -20, 3200);
+      c.style.background = colours[i % colours.length];
+      c.style.setProperty('--dx', (Math.random() * 240 - 120) + 'px');
+      c.style.setProperty('--rot', (Math.random() * 900 - 450) + 'deg');
+      c.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+      c.style.animationDelay = (Math.random() * 0.4) + 's';
+      if (i % 3 === 0) c.style.borderRadius = '50%';
+    }
+  }
+
+  /* ---------- extra sounds (all synthesized) ---------- */
+  function glitchBurst(t) {
+    for (let i = 0; i < 7; i++) {
+      const f = 200 + Math.random() * 1800;
+      tone(f, 0.035, 'square', 0.08, t + i * 0.035);
+    }
+    nz(t, 0.25, 'bandpass', 900, 3, 0.18);
+  }
+
+  function coinSparkle(t) {
+    tone(1976, 0.09, 'square', 0.06, t);
+    tone(2637, 0.28, 'square', 0.06, t + 0.07);
+  }
+
+  function crash(t) {
+    nz(t, 0.9, 'highpass', 6500, 0.4, 0.22);
+    nz(t, 0.5, 'highpass', 3000, 0.4, 0.1);
+  }
+
+  function arpeggio(t) {
+    const notes = [523, 659, 784, 1047, 1319, 1568];
+    notes.forEach(function (n, i) {
+      tone(n, 0.3, 'triangle', 0.09, t + i * 0.06);
+      tone(n, 0.3, 'triangle', 0.04, t + i * 0.06 + 0.14); /* echo */
+    });
+  }
+
+  function slashSound(t) {
+    thump(t, 900, 60, 0.35, 0.5);
+    nz(t, 0.18, 'highpass', 4000, 0.8, 0.35);
+    tone(2200, 0.08, 'sawtooth', 0.06, t + 0.02);
+  }
+
+  function stinger(t) {
+    [392, 523, 659].forEach(function (n, i) {
+      tone(n, 0.16, 'sawtooth', 0.05, t + i * 0.06);
+    });
+    thump(t, 130, 45, 0.25, 0.4);
+  }
+
+  function extraSound(k) {
+    const t = AC().currentTime;
+    if (k === 'no') glitchBurst(t);
+    else if (k === 'ok') coinSparkle(t);
+    else if (k === 'clear') { crash(t); arpeggio(t + 0.05); }
+    else if (k === 'slash') slashSound(t);
+    else if (k === 'stinger') stinger(t);
+  }
+
+  /* ---------- hook into the existing sfx() ---------- */
+  const baseSfx = sfx;
+  sfx = function (k) {
+    baseSfx(k);
+    if (!FX.on || !armed) return;
+    extraSound(k);
+    if (FX.reduced) return;
+
+    if (k === 'click') ring(mx, my);
+    else if (k === 'no') { shake(); flash(false); glitchLogo(); }
+    else if (k === 'clear') {
+      confetti(36);
+      flash(true);
+      const T = S.T;
+      if (T && T.end && T.pct >= 90) { slash('ALL-OUT ATTACK'); extraSound('slash'); }
+      else callout('CLEARED!');
+    }
+  };
+
+  /* ---------- streak callouts (watch the answer feedback) ---------- */
+  let lastFb = null;
+  new MutationObserver(function () {
+    if (!FX.on) return;
+    const b = document.querySelector('#fb .tip b');
+    if (!b || b === lastFb) return;
+    lastFb = b;
+    const txt = b.textContent.trim();
+    if (txt === 'ONE MORE!' || txt === 'BATON PASS!') {
+      if (armed) extraSound('stinger');
+      if (!FX.reduced) { callout(txt); flash(true); }
+    }
+  }).observe(document.getElementById('app'), { childList: true, subtree: true });
+
+  /* ---------- cursor trail ---------- */
+  addEventListener('pointermove', function (e) {
+    if (!FX.on || FX.reduced) return;
+    const now = performance.now();
+    if (now - FX.lastTrail < 45) return;
+    FX.lastTrail = now;
+    const d = spawn('trail' + (Math.random() < 0.4 ? ' w' : ''), e.clientX - 4, e.clientY - 4, 520);
+  });
+
+  /* ---------- typing ticks in the shortcut answer box ---------- */
+  document.addEventListener('keydown', function (e) {
+    if (!FX.on || !armed) return;
+    if (e.target && e.target.tagName === 'INPUT' && e.target.type !== 'range') {
+      nz(AC().currentTime, 0.02, 'bandpass', 4200, 2, 0.12);
+    }
+  });
+})();
+</script>
+<script>
+/* ==========================================================
+   EDIT HEIST FIRE + PAPER TEAR MODULE
+   1) Cartoon fire trail: flat single-shade red flames
+   2) Paper tear transition when opening a module
+   ========================================================== */
+(function () {
+  'use strict';
+  const RED = '#e60012';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fxOff = () => reduced || document.body.classList.contains('nofx');
+
+  const css = `
+  #fire{position:fixed;inset:0;z-index:9;pointer-events:none}
+  .tear{position:fixed;inset:0;z-index:11}
+  .tear .half{position:absolute;inset:0;filter:drop-shadow(0 8px 12px rgba(0,0,0,.65))}
+  .tear .paper{position:absolute;inset:0;clip-path:var(--clip);
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.035) 0 2px,transparent 2px 5px),#f4ead0;
+    display:flex;align-items:center;justify-content:center;text-align:center}
+  .tear .paper b{font-weight:400;font-size:clamp(56px,16vw,150px);line-height:.95;color:var(--r);
+    text-shadow:6px 6px 0 #0a0a0a;transform:rotate(-6deg) skew(-8deg)}
+  .tear .l{transform-origin:0 100%}
+  .tear .r{transform-origin:100% 0}
+  .tear.go .l{animation:pullL .85s .04s cubic-bezier(.55,0,.85,.45) forwards}
+  .tear.go .r{animation:pullR .85s .04s cubic-bezier(.55,0,.85,.45) forwards}
+  @keyframes pullL{
+    0%{transform:none}
+    16%{transform:translateX(-1.2%) rotate(-1.2deg)}
+    100%{transform:translateX(-78%) translateY(9%) rotate(-17deg)}
+  }
+  @keyframes pullR{
+    0%{transform:none}
+    16%{transform:translateX(1.2%) rotate(1deg)}
+    100%{transform:translateX(78%) translateY(-7%) rotate(15deg)}
+  }
+  .scrap{position:absolute;width:14px;height:10px;background:#f4ead0;
+    clip-path:polygon(0 20%,60% 0,100% 45%,70% 100%,10% 80%);animation:scrapA .8s ease-out forwards}
+  @keyframes scrapA{to{transform:translate(var(--sx),var(--sy)) rotate(var(--sr));opacity:0}}
+  .tog{flex-wrap:wrap}
+  `;
+  const st = document.createElement('style');
+  st.textContent = css;
+  document.head.appendChild(st);
+
+  /* ================= CUT-PAPER FLAME ================= */
+  const cv = document.createElement('canvas');
+  cv.id = 'fire';
+  document.body.appendChild(cv);
+  const ctx = cv.getContext('2d');
+  let W = 0, H = 0, dpr = 1, running = false;
+
+  function resize() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  addEventListener('resize', resize);
+
+  /* Cut-paper flame. Appears ONLY while the cursor is moving.
+     About every 90ms a brand-new random polygon is cut: random number of
+     tongues, random tongue heights, notch depths, width and length, all in
+     pixels. Between cuts the shape is only rotated to follow the motion,
+     never scaled, so every pose is genuinely different. Flat single red
+     with a hard offset shadow, like paper on a table. */
+  const F = { bx: 0, by: 0, vx: 0, vy: 0, ang: -Math.PI / 2, shape: null, nextCut: 0, lastMove: -1e9 };
+  const SHOW_MS = 70;                                   /* grace between mouse events */
+  const rnd = function (a, b) { return a + Math.random() * (b - a); };
+
+  function cutShape(speed) {
+    const len = (70 + Math.min(speed, 60) * 1.5) * rnd(0.8, 1.3);
+    const bw = rnd(11, 22);
+
+    function side() {
+      const n = Math.floor(rnd(3, 7)), ts = [], v = [];
+      for (let i = 0; i < n; i++) ts.push(rnd(0.08, 0.9));
+      ts.sort(function (a, b) { return a - b; });
+      ts.forEach(function (t) {
+        const w = bw * Math.pow(1 - t, 0.8);
+        v.push({ a: len * t, c: w * rnd(0.15, 0.6) });                        /* notch */
+        v.push({ a: len * Math.min(0.97, t + rnd(0.05, 0.22)), c: w * rnd(0.8, 1.8) }); /* tongue tip */
+      });
+      return v;
+    }
+    return { len: len, bw: bw, L: side(), R: side(), tipC: rnd(-0.18, 0.18) * len };
+  }
+
+  function paperFlame() {
+    const s = F.shape, ux = Math.cos(F.ang), uy = Math.sin(F.ang), nx = -uy, ny = ux;
+    const P = function (a, c) { return { x: F.bx + ux * a + nx * c, y: F.by + uy * a + ny * c }; };
+
+    const start = P(0, s.bw), end = P(0, -s.bw), tip = P(s.len, s.tipC);
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    s.L.forEach(function (v) { const p = P(v.a, v.c); ctx.lineTo(p.x, p.y); });
+    ctx.lineTo(tip.x, tip.y);
+    s.R.slice().reverse().forEach(function (v) { const p = P(v.a, -v.c); ctx.lineTo(p.x, p.y); });
+    ctx.lineTo(end.x, end.y);
+    const belly = P(-s.bw * 1.5, 0);
+    ctx.quadraticCurveTo(belly.x, belly.y, start.x, start.y);                 /* rounded belly */
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function frame() {
+    const now = performance.now();
+    ctx.clearRect(0, 0, W, H);
+    if (now - F.lastMove < SHOW_MS) {
+      if (!F.shape || now > F.nextCut) { F.shape = cutShape(Math.hypot(F.vx, F.vy)); F.nextCut = now + 90; }
+      F.ang += (Math.atan2(-1, -F.vx * 0.08) - F.ang) * 0.3;                   /* lean away from motion */
+      F.vx *= 0.85; F.vy *= 0.85;
+
+      ctx.fillStyle = RED;
+      ctx.shadowColor = 'rgba(0,0,0,.5)';
+      ctx.shadowBlur = 0; ctx.shadowOffsetX = 3; ctx.shadowOffsetY = 5;
+      paperFlame();
+      requestAnimationFrame(frame);
+    } else {
+      running = false;                                                        /* cursor stopped: flame is gone */
+    }
+  }
+
+  addEventListener('pointermove', function (e) {
+    if (fxOff()) return;
+    const now = performance.now(), x = e.clientX, y = e.clientY;
+    if (now - F.lastMove >= SHOW_MS) {                                        /* fresh appearance */
+      F.vx = 0; F.vy = 0; F.ang = -Math.PI / 2; F.shape = null;
+    } else {
+      F.vx = F.vx * 0.5 + (x - F.bx) * 0.5;
+      F.vy = F.vy * 0.5 + (y - F.by) * 0.5;
+    }
+    F.bx = x; F.by = y; F.lastMove = now;
+    if (!running) { running = true; requestAnimationFrame(frame); }
+  });
+
+  /* ================= PAPER TEAR ================= */
+  function ripSound() {
+    if (typeof armed === 'undefined' || !armed) return;
+    const t = AC().currentTime;
+    for (let i = 0; i < 16; i++) {
+      nz(t + 0.06 + i * 0.028, 0.035, 'bandpass', 1800 + Math.random() * 3500, 1.5, 0.16 + Math.random() * 0.1);
+    }
+    nz(t, 0.5, 'highpass', 2500, 0.4, 0.06);
+    thump(t + 0.05, 180, 60, 0.15, 0.25);
+  }
+
+  window.paperTear = function (ev, fn) {
+    if (fxOff() || busy) { go(fn); return; }
+    busy = true;
+    const x = ev && ev.clientX != null ? ev.clientX / innerWidth * 100 : 50;
+    const pts = [];
+    for (let i = 0; i <= 12; i++) {
+      const jx = x + (Math.random() - 0.5) * 8 * (i % 2 ? 1 : 0.5);
+      pts.push(jx.toFixed(1) + '% ' + (i * 100 / 12).toFixed(1) + '%');
+    }
+    const left = 'polygon(0 0,' + pts.join(',') + ',0 100%)';
+    const right = 'polygon(' + pts.join(',') + ',100% 100%,100% 0)';
+    const label = '<b>EDIT<br>HEIST</b>';
+
+    const o = document.createElement('div');
+    o.className = 'tear';
+    o.innerHTML =
+      '<div class="half l"><div class="paper" style="--clip:' + left + '">' + label + '</div></div>' +
+      '<div class="half r"><div class="paper" style="--clip:' + right + '">' + label + '</div></div>';
+    document.body.appendChild(o);
+
+    fn();
+    window.scrollTo(0, 0);
+
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement('div');
+      s.className = 'scrap';
+      s.style.left = (x + (Math.random() - 0.5) * 6) + '%';
+      s.style.top = (Math.random() * 100) + '%';
+      s.style.setProperty('--sx', (Math.random() * 360 - 180) + 'px');
+      s.style.setProperty('--sy', (Math.random() * 240 - 60) + 'px');
+      s.style.setProperty('--sr', (Math.random() * 720 - 360) + 'deg');
+      s.style.animationDelay = (0.1 + Math.random() * 0.25) + 's';
+      o.appendChild(s);
+    }
+
+    requestAnimationFrame(function () {
+      void o.offsetWidth;
+      o.classList.add('go');
+      ripSound();
+    });
+    setTimeout(function () { o.remove(); busy = false; }, 1000);
+  };
+})();
 </script>
 </body></html>
